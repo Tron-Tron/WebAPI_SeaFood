@@ -5,6 +5,7 @@ const orderController = require("../../controllers/orderController");
 const router = express.Router();
 
 //router.use(jwtAuth, authorize("admin"));
+router.post("/", orderController.createNewOrder);
 router.get("/", orderController.getAllOrders);
 router.get("/:idOrder", orderController.getOrderById);
 

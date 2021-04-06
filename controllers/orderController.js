@@ -2,19 +2,19 @@ const { asyncMiddleware } = require("../middleware/asyncMiddleware");
 const ErrorResponse = require("../model/ErrorResponse");
 const SuccessResponse = require("../model/SuccessResponse");
 const mysql = require("../sql/mysql");
-// exports.createNewOrder = asyncMiddleware(async (req, res, next) => {
-//   const { total, email, DeliveryDate, OrderDate, Status, Note } = req.body;
-//   mysql.query(
-//     `INSERT INTO orders(total,email,DeliveryDate,OrderDate,Status,Note) VALUES (?,?,?,?,?,?)`,
-//     [total, email, DeliveryDate, OrderDate, Status, Note],
-//     (err, result, fields) => {
-//       if (err) {
-//         return next(new ErrorResponse(500, err.sqlMessage));
-//       }
-//       res.status(201).json(new SuccessResponse(201, result));
-//     }
-//   );
-// });
+exports.createNewOrder = asyncMiddleware(async (req, res, next) => {
+  const { total, email, DeliveryDate, OrderDate, Status, Note } = req.body;
+  mysql.query(
+    `INSERT INTO orders(total,email,DeliveryDate,OrderDate,Status,Note) VALUES (?,?,?,?,?,?)`,
+    [total, email, DeliveryDate, OrderDate, Status, Note],
+    (err, result, fields) => {
+      if (err) {
+        return next(new ErrorResponse(500, err.sqlMessage));
+      }
+      res.status(201).json(new SuccessResponse(201, result));
+    }
+  );
+});
 
 exports.getAllOrders = asyncMiddleware(async (req, res, next) => {
   mysql.query(`SELECT * FROM orders`, async (err, result, fields) => {

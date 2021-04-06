@@ -26,15 +26,12 @@ exports.createNewProduct = asyncMiddleware(async (req, res, next) => {
     Description,
     Distributor,
     idCategory,
-    idPromotion,
-    idComment,
-    idRating,
   } = req.body;
 
   const Remark = Boolean(req.body.Remark);
-  const mime = req.file.mimetype;
-  const dataImage = fs.readFileSync(`uploads/${req.file.filename}`);
-
+  //const mime = req.file.mimetype;
+  // const dataImage = fs.readFileSync(`uploads/${req.file.filename}`);
+  const dataImage = req.file.filename;
   mysql.query(
     `INSERT INTO products(ProductName,
       Price,
@@ -44,11 +41,9 @@ exports.createNewProduct = asyncMiddleware(async (req, res, next) => {
       Remark,
       Image,
       Distributor,
-      idCategory,
-      idPromotion,
-      idComment,
-      mime,
-      idRating) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      idCategory
+     
+  ) VALUES (?,?,?,?,?,?,?,?,?)`,
     [
       ProductName,
       Price,
@@ -59,10 +54,6 @@ exports.createNewProduct = asyncMiddleware(async (req, res, next) => {
       dataImage,
       Distributor,
       idCategory,
-      idPromotion,
-      idComment,
-      mime,
-      idRating,
     ],
     (err, result, fields) => {
       if (err) {
