@@ -6,7 +6,7 @@ const mysql = require("../sql/mysql");
 exports.createNewRole = asyncMiddleware(async (req, res, next) => {
   const { role_name } = req.body;
   mysql.query(
-    `INSERT INTO products(role_name) VALUES(?)`,
+    `INSERT INTO role(role_name) VALUES(?)`,
     [role_name],
     (err, result, fields) => {
       if (err) {

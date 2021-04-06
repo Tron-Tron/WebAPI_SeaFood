@@ -33,7 +33,6 @@ exports.login = asyncMiddleware(async (req, res, next) => {
       //     console.log("result.email", result[0].email);
       if (result.length > 0) {
         const checkPass = await bcrypt.compare(Password, result[0].Password);
-
         if (checkPass) {
           const token = jwt.sign(
             {

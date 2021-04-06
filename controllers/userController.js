@@ -33,18 +33,6 @@ exports.getUserById = asyncMiddleware(async (req, res, next) => {
     res.status(200).json(new SuccessResponse(200, user));
   }
 });
-exports.deleteUserById = asyncMiddleware(async (req, res, next) => {
-  const { userId } = req.params;
-  if (!userId.trim()) {
-    return next(new ErrorRespone(400, "userId is empty"));
-  }
-
-  const deletedUser = await User.findByIdAndDelete(userId);
-  if (!deletedUser) {
-    return next(new ErrorRespone(400, "Can not delete"));
-  }
-  res.status(200).json(new SuccessResponse(200));
-});
 
 exports.updateUserById = asyncMiddleware(async (req, res, next) => {
   const { userId } = req.params;
@@ -52,12 +40,6 @@ exports.updateUserById = asyncMiddleware(async (req, res, next) => {
   if (!userId.trim()) {
     return next(new ErrorRespone(400, "userId is empty"));
   }
-
-  // const updatedUser = await User.findOneAndUpdate(
-  //   { _id: userId },
-  //   req.body,
-  //   { new: true } //tra ve data sau khi update, khong co thi tra ve data truoc khi update
-  // );
 
   //validate ObjetcId
   if (!isValidObjectId(userId)) {

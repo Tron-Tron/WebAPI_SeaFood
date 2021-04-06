@@ -11,7 +11,6 @@ exports.createNewCategory = asyncMiddleware(async (req, res, next) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
       }
-      console.log("fields", fields);
       res.status(201).json(new SuccessResponse(201, result));
     }
   );
@@ -33,7 +32,7 @@ exports.getAllCategory = asyncMiddleware(async (req, res, next) => {
 exports.deleteCategoryById = asyncMiddleware(async (req, res, next) => {
   const { idCategory } = req.params;
   if (!idCategory.trim()) {
-    return next(new ErrorRespone(400, "CategoryId is empty"));
+    return next(new ErrorRespone(400, "idCategory is empty"));
   }
   mysql.query(
     `DELETE FROM category where idCategory = ? `,
@@ -42,7 +41,6 @@ exports.deleteCategoryById = asyncMiddleware(async (req, res, next) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
       }
-
       if (result.affectedRows > 0) {
         return res
           .status(200)
@@ -57,7 +55,7 @@ exports.updateCategoryById = asyncMiddleware(async (req, res, next) => {
   const { idCategory } = req.params;
   const { CategoryName } = req.body;
   if (!idCategory.trim()) {
-    return next(new ErrorRespone(400, "Category is empty"));
+    return next(new ErrorResponse(400, "idCategory is empty"));
   }
   mysql.query(
     `UPDATE category SET CategoryName = ? WHERE idCategory = ?`,
