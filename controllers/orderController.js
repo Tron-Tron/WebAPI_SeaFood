@@ -3,10 +3,18 @@ const ErrorResponse = require("../model/ErrorResponse");
 const SuccessResponse = require("../model/SuccessResponse");
 const mysql = require("../sql/mysql");
 exports.createNewOrder = asyncMiddleware(async (req, res, next) => {
-  const { total, email, DeliveryDate, OrderDate, Status, Note } = req.body;
+  const {
+    total,
+    email,
+    DeliveryDate,
+    OrderDate,
+    Status,
+    Note,
+    idPromotion,
+  } = req.body;
   mysql.query(
-    `INSERT INTO orders(total,email,DeliveryDate,OrderDate,Status,Note) VALUES (?,?,?,?,?,?)`,
-    [total, email, DeliveryDate, OrderDate, Status, Note],
+    `INSERT INTO orders(total,email,DeliveryDate,OrderDate,Status,Note,idPromotion) VALUES (?,?,?,?,?,?,?)`,
+    [total, email, DeliveryDate, OrderDate, Status, Note, idPromotion],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -48,14 +56,14 @@ exports.getOrderById = asyncMiddleware(async (req, res, next) => {
     }
   );
 });
-exports.deleteCategoryById = asyncMiddleware(async (req, res, next) => {
-  const { idCategory } = req.params;
-  if (!idCategory.trim()) {
-    return next(new ErrorRespone(400, "idCategory is empty"));
+exports.deleteOrderById = asyncMiddleware(async (req, res, next) => {
+  const { idOrder } = req.params;
+  if (!idOrder.trim()) {
+    return next(new ErrorRespone(400, "idOrder is empty"));
   }
   mysql.query(
-    `DELETE FROM category where idCategory = ? `,
-    [idCategory],
+    `DELETE FROM orders where idOrder = ? `,
+    [idOrder],
     async (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -65,20 +73,20 @@ exports.deleteCategoryById = asyncMiddleware(async (req, res, next) => {
           .status(200)
           .json(new SuccessResponse(200, "Delete Successfully"));
       } else {
-        return next(new ErrorResponse(404, "No Category"));
+        return next(new ErrorResponse(404, "No Order"));
       }
     }
   );
 });
-exports.updateCategoryById = asyncMiddleware(async (req, res, next) => {
-  const { idCategory } = req.params;
-  const { CategoryName } = req.body;
-  if (!idCategory.trim()) {
-    return next(new ErrorResponse(400, "idCategory is empty"));
+exports.updateOrderById = asyncMiddleware(async (req, res, next) => {
+  const { idOrder } = req.params;
+  const { total, email, DeliveryDate, OrderDate, Status, Note } = req.body;
+  if (!idOrder.trim()) {
+    return next(new ErrorResponse(400, "idOrder is empty"));
   }
   mysql.query(
-    `UPDATE category SET CategoryName = ? WHERE idCategory = ?`,
-    [CategoryName, idCategory],
+    `UPDATE orders SET total = ?,email=?, DeliveryDate=?, OrderDate=?, Status=?, Note=? WHERE idOrder = ?`,
+    [total, email, DeliveryDate, OrderDate, Status, Note, idOrder],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -88,7 +96,7 @@ exports.updateCategoryById = asyncMiddleware(async (req, res, next) => {
           .status(200)
           .json(new SuccessResponse(200, "Update Successfully"));
       } else {
-        return next(new ErrorResponse(404, "No Category"));
+        return next(new ErrorResponse(404, "No Order"));
       }
     }
   );

@@ -6,10 +6,25 @@ const router = express.Router();
 
 //router.use(jwtAuth, authorize("admin"));
 router.post("/", orderController.createNewOrder);
-router.get("/", orderController.getAllOrders);
-router.get("/:idOrder", orderController.getOrderById);
+router.get("/", jwtAuth, authorize("admin"), orderController.getAllOrders);
+router.get(
+  "/:idOrder",
+  jwtAuth,
+  authorize("admin"),
+  orderController.getOrderById
+);
 
-router.delete("/:idOrder", orderController.deleteCategoryById);
+router.delete(
+  "/:idOrder",
+  jwtAuth,
+  authorize("admin"),
+  orderController.deleteOrderById
+);
 
-router.patch("/:idOrder", orderController.updateCategoryById);
+router.patch(
+  "/:idOrder",
+  jwtAuth,
+  authorize("admin"),
+  orderController.updateOrderById
+);
 module.exports = router;

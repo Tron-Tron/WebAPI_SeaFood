@@ -115,17 +115,15 @@ exports.updateProductById = asyncMiddleware(async (req, res, next) => {
     Date,
     Amount,
     Description,
-    Remark,
     Image,
     Distributor,
     idCategory,
-    idPromotion,
-    idComment,
-    idRating,
   } = req.body;
   if (!idProduct.trim()) {
     return next(new ErrorResponse(400, "idProduct is empty"));
   }
+  const Remark = Boolean(req.body.Remark);
+  const dataImage = req.file.filename;
   mysql.query(
     `UPDATE products SET ProductName = ?,Price=?,
   Date=?,
@@ -134,10 +132,8 @@ exports.updateProductById = asyncMiddleware(async (req, res, next) => {
   Remark=?,
   Image=?,
   Distributor=?,
-  idCategory=?,
-  idPromotion=?,
-  idComment=?,
-  idRating=? WHERE idProduct = ?`,
+  idCategory=?
+ WHERE idProduct = ?`,
     [
       ProductName,
       Price,
@@ -145,12 +141,9 @@ exports.updateProductById = asyncMiddleware(async (req, res, next) => {
       Amount,
       Description,
       Remark,
-      Image,
+      dataImage,
       Distributor,
       idCategory,
-      idPromotion,
-      idComment,
-      idRating,
       idProduct,
     ],
     (err, result, fields) => {

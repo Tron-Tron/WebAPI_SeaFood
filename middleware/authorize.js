@@ -9,7 +9,7 @@ exports.authorize = (...roles) => (req, res, next) => {
     return next(new ErrorRespone(401, "Unauthorization"));
   }
 
-  if (!roles.includes(req.user.role)) {
+  if (!roles.includes(req.user.idRole)) {
     return next(
       new ErrorRespone(403, "Dont have permission to access this user")
     );

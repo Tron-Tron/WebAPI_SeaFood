@@ -7,13 +7,24 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(jwtAuth, productController.getAllProducts)
+  .get(jwtAuth, authorize("admin"), productController.getAllProducts)
   //  .post(productController.createNewProduct);
-  .post(upload.single("image"), productController.createNewProduct);
+  .post(
+    jwtAuth,
+    authorize("admin"),
+    upload.single("image"),
+    productController.createNewProduct
+  );
 
 router
   .route("/:idProduct")
-  .get(productController.getProductById)
-  .delete(productController.deleteProductById)
-  .patch(productController.updateProductById);
+  .get(jwtAuth, authorize("admin"), productController.getProductById)
+  .delete(jwtAuth, authorize("admin"), productController.deleteProductById)
+  .patch(
+    jwtAuth,
+    authorize("admin"),
+    upload.single("image"),
+    productController.updateProductById
+  );
+
 module.exports = router;

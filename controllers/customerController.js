@@ -4,10 +4,10 @@ const SuccessResponse = require("../model/SuccessResponse");
 const mysql = require("../sql/mysql");
 
 exports.createNewCustomer = asyncMiddleware(async (req, res, next) => {
-  const { CategoryName } = req.body;
+  const { email, Address, Phone, CustomerName } = req.body;
   mysql.query(
-    `INSERT INTO category(CategoryName) VALUES (?)`,
-    [CategoryName],
+    `INSERT INTO customers(email, Address, Phone, CustomerName) VALUES (?)`,
+    [email, Address, Phone, CustomerName],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -17,8 +17,8 @@ exports.createNewCustomer = asyncMiddleware(async (req, res, next) => {
   );
 });
 
-exports.getAllCategory = asyncMiddleware(async (req, res, next) => {
-  mysql.query(`SELECT * FROM category`, async (err, result, fields) => {
+exports.getAllCustomers = asyncMiddleware(async (req, res, next) => {
+  mysql.query(`SELECT * FROM customers`, async (err, result, fields) => {
     if (err) {
       console.log(err);
     }

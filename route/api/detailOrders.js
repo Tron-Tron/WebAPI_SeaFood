@@ -6,8 +6,8 @@ const router = express.Router();
 
 //router.use(jwtAuth, authorize("admin"));
 router.post("/", detailOrderController.createNewOrderDetail);
-// router.get("/", orderDetailController.getAllOrders);
-// router.get("/:idOrder", orderController.getOrderById);
+router.get("/", detailOrderController.getAllDetailOrders);
+router.get("/:idOrder", detailOrderController.getDetailOrderById);
 
 // router.delete("/:idOrder", orderController.deleteCategoryById);
 
