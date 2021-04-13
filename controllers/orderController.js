@@ -6,15 +6,15 @@ exports.createNewOrder = asyncMiddleware(async (req, res, next) => {
   const {
     total,
     email,
-    DeliveryDate,
+    Payment,
     OrderDate,
     Status,
     Note,
     idPromotion,
   } = req.body;
   mysql.query(
-    `INSERT INTO orders(total,email,DeliveryDate,OrderDate,Status,Note,idPromotion) VALUES (?,?,?,?,?,?,?)`,
-    [total, email, DeliveryDate, OrderDate, Status, Note, idPromotion],
+    `INSERT INTO orders(total,email,Payment,OrderDate,Status,Note,idPromotion) VALUES (?,?,?,?,?,?,?)`,
+    [total, email, Payment, OrderDate, Status, Note, idPromotion],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -37,13 +37,13 @@ exports.getAllOrders = asyncMiddleware(async (req, res, next) => {
   });
 });
 exports.getOrderById = asyncMiddleware(async (req, res, next) => {
-  const { idOrder } = req.params;
+  const { id } = req.params;
   if (!idOrder.trim()) {
     return next(new ErrorResponse(400, "idOrder is empty"));
   }
   mysql.query(
-    `SELECT * FROM orders, detailorders WHERE orders.idOrder = detailorders.idOrder and orders.idOrder = ?`,
-    [idOrder],
+    `SELECT * FROM orders, detailorders WHERE orders.id = detailorders.idOrder and orders.id = ?`,
+    [id],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -57,13 +57,13 @@ exports.getOrderById = asyncMiddleware(async (req, res, next) => {
   );
 });
 exports.deleteOrderById = asyncMiddleware(async (req, res, next) => {
-  const { idOrder } = req.params;
+  const { id } = req.params;
   if (!idOrder.trim()) {
     return next(new ErrorRespone(400, "idOrder is empty"));
   }
   mysql.query(
-    `DELETE FROM orders where idOrder = ? `,
-    [idOrder],
+    `DELETE FROM orders where id = ? `,
+    [id],
     async (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -80,7 +80,7 @@ exports.deleteOrderById = asyncMiddleware(async (req, res, next) => {
 });
 exports.updateOrderById = asyncMiddleware(async (req, res, next) => {
   const { idOrder } = req.params;
-  const { total, email, DeliveryDate, OrderDate, Status, Note } = req.body;
+  const { total, email, Payment, OrderDate, Status, Note } = req.body;
   if (!idOrder.trim()) {
     return next(new ErrorResponse(400, "idOrder is empty"));
   }

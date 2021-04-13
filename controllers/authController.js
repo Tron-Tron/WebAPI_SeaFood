@@ -4,14 +4,21 @@ const mysql = require("../sql/mysql");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const SuccessResponse = require("../model/SuccessResponse");
+function isValidEmail(email) {
+  const regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
 
 exports.register = asyncMiddleware(async (req, res, next) => {
-  const { email, UserName, Password, idRole, flat } = req.body;
+  const { email, Password, idRole, flag } = req.body;
   const salt = await bcrypt.genSalt(12);
   const hashedPassword = await bcrypt.hash(Password, salt);
+  if (!isValidEmail(email)) {
+    return next(new ErrorResponse(400, "Valid Email"));
+  }
   mysql.query(
-    `INSERT INTO user(email, UserName, Password, idRole, flag ) VALUES (?,?,?,'guest',true)`,
-    [email, UserName, hashedPassword, idRole, flat],
+    `INSERT INTO account(email, Password, idRole, flag ) VALUES (?,?,?,'guest',true)`,
+    [email, hashedPassword, idRole, flag],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -24,7 +31,7 @@ exports.register = asyncMiddleware(async (req, res, next) => {
 exports.login = asyncMiddleware(async (req, res, next) => {
   const { email, Password } = req.body;
   mysql.query(
-    `SELECT * FROM user WHERE email = ?`,
+    `SELECT * FROM account WHERE email = ?`,
     [email],
     async (err, result, fields) => {
       if (err) {

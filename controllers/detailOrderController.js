@@ -38,7 +38,7 @@ exports.getDetailOrderById = asyncMiddleware(async (req, res, next) => {
     return next(new ErrorResponse(400, "idOrder is empty"));
   }
   mysql.query(
-    `SELECT * FROM orders, detailorders WHERE orders.idOrder = detailorders.idOrder and orders.idOrder = ?`,
+    `SELECT * FROM orders, detailorders WHERE orders.id = detailorders.idOrder and orders.id = ?`,
     [idOrder],
     (err, result, fields) => {
       if (err) {

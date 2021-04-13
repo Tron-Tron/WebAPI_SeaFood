@@ -4,6 +4,9 @@ const SuccessResponse = require("../model/SuccessResponse");
 const mysql = require("../sql/mysql");
 exports.createNewCategory = asyncMiddleware(async (req, res, next) => {
   const { CategoryName } = req.body;
+  if (CategoryName === "") {
+    return next(new ErrorResponse(400, "CategoryName is empty"));
+  }
   mysql.query(
     `INSERT INTO category(CategoryName) VALUES (?)`,
     [CategoryName],
@@ -30,12 +33,12 @@ exports.getAllCategory = asyncMiddleware(async (req, res, next) => {
 });
 
 exports.deleteCategoryById = asyncMiddleware(async (req, res, next) => {
-  const { idCategory } = req.params;
-  if (!idCategory.trim()) {
-    return next(new ErrorRespone(400, "idCategory is empty"));
+  const { id } = req.params;
+  if (!id.trim()) {
+    return next(new ErrorResponse(400, "idCategory is empty"));
   }
   mysql.query(
-    `DELETE FROM category where idCategory = ? `,
+    `DELETE FROM category where id = ? `,
     [idCategory],
     async (err, result, fields) => {
       if (err) {
@@ -52,13 +55,16 @@ exports.deleteCategoryById = asyncMiddleware(async (req, res, next) => {
   );
 });
 exports.updateCategoryById = asyncMiddleware(async (req, res, next) => {
-  const { idCategory } = req.params;
+  const { id } = req.params;
   const { CategoryName } = req.body;
-  if (!idCategory.trim()) {
+  if (!id.trim()) {
     return next(new ErrorResponse(400, "idCategory is empty"));
   }
+  if (CategoryName.length === 0) {
+    return next(new ErrorResponse(400, "CategoryName is empty"));
+  }
   mysql.query(
-    `UPDATE category SET CategoryName = ? WHERE idCategory = ?`,
+    `UPDATE category SET CategoryName = ? WHERE id = ?`,
     [CategoryName, idCategory],
     (err, result, fields) => {
       if (err) {

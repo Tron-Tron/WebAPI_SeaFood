@@ -17,15 +17,15 @@ const jwtAuth = async (req, res, next) => {
     const payload = jwt.verify(token, process.env.JWT_KEY);
     console.log(payload);
     mysql.query(
-      `SELECT * FROM user WHERE email=?`,
+      `SELECT * FROM account WHERE email=?`,
       [payload.email],
       (err, result, fields) => {
         if (err) throw err;
         if (result.length > 0) {
-          req.user = payload;
+          req.account = payload;
           next();
         } else {
-          return next(ErrorResponse(401, "Unauthorized"));
+          return next(new ErrorResponse(401, "Unauthorized"));
         }
       }
     );

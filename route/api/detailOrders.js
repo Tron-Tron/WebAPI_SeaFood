@@ -4,7 +4,7 @@ const { jwtAuth } = require("../../middleware/jwtAuth");
 const detailOrderController = require("../../controllers/detailOrderController");
 const router = express.Router();
 
-//router.use(jwtAuth, authorize("admin"));
+router.use(jwtAuth, authorize("admin"));
 router.post("/", detailOrderController.createNewOrderDetail);
 router.get("/", detailOrderController.getAllDetailOrders);
 router.get("/:idOrder", detailOrderController.getDetailOrderById);

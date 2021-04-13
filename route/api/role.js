@@ -12,13 +12,9 @@ const router = express.Router();
 router.get("/test", (req, res) => {
   res.send("ok");
 });
-//cach 1
-//Create
-// router.post("/", roleController.createNewRole);
-// router.get("/", roleController.getAllRoles);
 
 //Cach 2
-// router.use(jwtAuth, authorize("admin"));
+router.use(jwtAuth, authorize("admin"));
 router
   .route("/")
   .post(roleController.createNewRole)

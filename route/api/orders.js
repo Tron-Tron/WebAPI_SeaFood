@@ -7,15 +7,10 @@ const router = express.Router();
 //router.use(jwtAuth, authorize("admin"));
 router.post("/", orderController.createNewOrder);
 router.get("/", jwtAuth, authorize("admin"), orderController.getAllOrders);
-router.get(
-  "/:idOrder",
-  jwtAuth,
-  authorize("admin"),
-  orderController.getOrderById
-);
+router.get("/:id", jwtAuth, authorize("admin"), orderController.getOrderById);
 
 router.delete(
-  "/:idOrder",
+  "/:id",
   jwtAuth,
   authorize("admin"),
   orderController.deleteOrderById

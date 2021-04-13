@@ -2,12 +2,27 @@ const { asyncMiddleware } = require("../middleware/asyncMiddleware");
 const ErrorResponse = require("../model/ErrorResponse");
 const SuccessResponse = require("../model/SuccessResponse");
 const mysql = require("../sql/mysql");
+function isValidEmail(email) {
+  const regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}
+function validatePhoneNumber(phone) {
+  var re = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im;
 
+  return re.test(phone);
+}
 exports.createNewCustomer = asyncMiddleware(async (req, res, next) => {
   const { email, Address, Phone, CustomerName } = req.body;
+  const image = req.file.filename;
+  if (!isValidEmail(email)) {
+    return next(new ErrorResponse(400, "Valid Email or Phone"));
+  }
+  if (!validatePhoneNumber(Phone)) {
+    return next(new ErrorResponse(400, "Valid Email or Phone"));
+  }
   mysql.query(
-    `INSERT INTO customers(email, Address, Phone, CustomerName) VALUES (?)`,
-    [email, Address, Phone, CustomerName],
+    `INSERT INTO customers(email, Address, Phone, CustomerName,image ) VALUES (?,?,?,?,?)`,
+    [email, Address, Phone, CustomerName, image],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -20,24 +35,26 @@ exports.createNewCustomer = asyncMiddleware(async (req, res, next) => {
 exports.getAllCustomers = asyncMiddleware(async (req, res, next) => {
   mysql.query(`SELECT * FROM customers`, async (err, result, fields) => {
     if (err) {
-      console.log(err);
+      return next(new ErrorResponse(500, err.sqlMessage));
     }
     if (result.length > 0) {
       return res.status(200).json(new SuccessResponse(200, result));
     } else {
-      return next(new ErrorResponse(404, "No Category"));
+      return next(new ErrorResponse(404, "No Customers"));
     }
   });
 });
 
-exports.deleteCategoryById = asyncMiddleware(async (req, res, next) => {
-  const { idCategory } = req.params;
-  if (!idCategory.trim()) {
-    return next(new ErrorRespone(400, "idCategory is empty"));
+exports.deleteCustomerById = asyncMiddleware(async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id.trim()) {
+    return next(new ErrorResponse(400, "idCustomer is empty"));
   }
+
   mysql.query(
-    `DELETE FROM category where idCategory = ? `,
-    [idCategory],
+    `DELETE FROM customers where id = ? `,
+    [id],
     async (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -47,20 +64,30 @@ exports.deleteCategoryById = asyncMiddleware(async (req, res, next) => {
           .status(200)
           .json(new SuccessResponse(200, "Delete Successfully"));
       } else {
-        return next(new ErrorResponse(404, "No Category"));
+        return next(new ErrorResponse(404, "No Customer"));
       }
     }
   );
 });
-exports.updateCategoryById = asyncMiddleware(async (req, res, next) => {
-  const { idCategory } = req.params;
-  const { CategoryName } = req.body;
-  if (!idCategory.trim()) {
-    return next(new ErrorResponse(400, "idCategory is empty"));
+exports.updateCustomerById = asyncMiddleware(async (req, res, next) => {
+  const { id } = req.params;
+  const { email, Address, Phone, CustomerName } = req.body;
+  const image = req.file.filename;
+  if (!id.trim()) {
+    return next(new ErrorRespone(400, "email is empty"));
+  }
+  if (!email.trim()) {
+    return next(new ErrorRespone(400, "email is empty"));
+  }
+  if (!isValidEmail(email)) {
+    return next(new ErrorResponse(400, "Valid Email"));
+  }
+  if (!validatePhoneNumber(Phone)) {
+    return next(new ErrorResponse(400, "Valid Phone"));
   }
   mysql.query(
-    `UPDATE category SET CategoryName = ? WHERE idCategory = ?`,
-    [CategoryName, idCategory],
+    `UPDATE customers SET Address=?, Phone=?, CustomerName=?,image=? WHERE email = ?`,
+    [Address, Phone, CustomerName, image, email],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -70,7 +97,7 @@ exports.updateCategoryById = asyncMiddleware(async (req, res, next) => {
           .status(200)
           .json(new SuccessResponse(200, "Update Successfully"));
       } else {
-        return next(new ErrorResponse(404, "No Category"));
+        return next(new ErrorResponse(404, "No Customer"));
       }
     }
   );

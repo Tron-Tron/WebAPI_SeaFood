@@ -16,7 +16,3 @@ exports.createNewRole = asyncMiddleware(async (req, res, next) => {
     }
   );
 });
-exports.getAllRoles = asyncMiddleware(async (req, res, next) => {
-  const roles = await Role.find();
-  res.status(200).json(new SuccessResponse(200, roles));
-});

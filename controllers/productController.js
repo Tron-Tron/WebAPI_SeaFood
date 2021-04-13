@@ -64,13 +64,13 @@ exports.createNewProduct = asyncMiddleware(async (req, res, next) => {
   );
 });
 exports.deleteProductById = asyncMiddleware(async (req, res, next) => {
-  const { idProduct } = req.params;
-  if (!idProduct.trim()) {
+  const { id } = req.params;
+  if (!id.trim()) {
     return next(new ErrorResponse(400, "idProduct is empty"));
   }
   mysql.query(
-    `DELETE FROM products WHERE idProduct= ?`,
-    [idProduct],
+    `DELETE FROM products WHERE id= ?`,
+    [id],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -78,23 +78,21 @@ exports.deleteProductById = asyncMiddleware(async (req, res, next) => {
       if (result.affectedRows > 0) {
         return res
           .status(200)
-          .json(
-            new SuccessResponse(200, `Delete Successfully Product ${idProduct}`)
-          );
+          .json(new SuccessResponse(200, `Delete Successfully Product ${id}`));
       } else {
-        return next(new ErrorResponse(404, `No Product has ${idProduct}`));
+        return next(new ErrorResponse(404, `No Product has ${id}`));
       }
     }
   );
 });
 exports.getProductById = asyncMiddleware(async (req, res, next) => {
-  const { idProduct } = req.params;
-  if (!idProduct.trim()) {
+  const { id } = req.params;
+  if (!id.trim()) {
     return next(new ErrorResponse(400, "idProduct is empty"));
   }
   mysql.query(
-    `SELECT * FROM products WHERE idProduct= ?`,
-    [idProduct],
+    `SELECT * FROM products WHERE id= ?`,
+    [id],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));
@@ -108,7 +106,7 @@ exports.getProductById = asyncMiddleware(async (req, res, next) => {
   );
 });
 exports.updateProductById = asyncMiddleware(async (req, res, next) => {
-  const { idProduct } = req.params;
+  const { id } = req.params;
   const {
     ProductName,
     Price,
@@ -119,7 +117,7 @@ exports.updateProductById = asyncMiddleware(async (req, res, next) => {
     Distributor,
     idCategory,
   } = req.body;
-  if (!idProduct.trim()) {
+  if (!id.trim()) {
     return next(new ErrorResponse(400, "idProduct is empty"));
   }
   const Remark = Boolean(req.body.Remark);
@@ -133,7 +131,7 @@ exports.updateProductById = asyncMiddleware(async (req, res, next) => {
   Image=?,
   Distributor=?,
   idCategory=?
- WHERE idProduct = ?`,
+ WHERE id = ?`,
     [
       ProductName,
       Price,
@@ -144,7 +142,7 @@ exports.updateProductById = asyncMiddleware(async (req, res, next) => {
       dataImage,
       Distributor,
       idCategory,
-      idProduct,
+      id,
     ],
     (err, result, fields) => {
       if (err) {
@@ -154,10 +152,7 @@ exports.updateProductById = asyncMiddleware(async (req, res, next) => {
         return res
           .status(200)
           .json(
-            new SuccessResponse(
-              200,
-              `Update product has ${idProduct} Successfully`
-            )
+            new SuccessResponse(200, `Update product has ${id} Successfully`)
           );
       } else {
         return next(new ErrorResponse(404, "No product"));

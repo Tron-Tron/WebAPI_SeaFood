@@ -7,7 +7,7 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(jwtAuth, authorize("admin"), productController.getAllProducts)
+  .get(productController.getAllProducts)
   //  .post(productController.createNewProduct);
   .post(
     jwtAuth,
@@ -17,7 +17,7 @@ router
   );
 
 router
-  .route("/:idProduct")
+  .route("/:id")
   .get(jwtAuth, authorize("admin"), productController.getProductById)
   .delete(jwtAuth, authorize("admin"), productController.deleteProductById)
   .patch(
