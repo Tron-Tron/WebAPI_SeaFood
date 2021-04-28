@@ -19,7 +19,7 @@ router
 router
   .route("/:id")
   .get(jwtAuth, authorize("admin"), productController.getProductById)
-  .delete(jwtAuth, authorize("admin"), productController.deleteProductById)
+  .delete(productController.deleteProductById)
   .patch(
     jwtAuth,
     authorize("admin"),

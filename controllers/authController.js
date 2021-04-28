@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const SuccessResponse = require("../model/SuccessResponse");
 function isValidEmail(email) {
-  const regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  const regex = /^[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
   return regex.test(email);
 }
 
@@ -17,7 +17,7 @@ exports.register = asyncMiddleware(async (req, res, next) => {
     return next(new ErrorResponse(400, "Valid Email"));
   }
   mysql.query(
-    `INSERT INTO account(email, Password, idRole, flag ) VALUES (?,?,?,'guest',true)`,
+    `INSERT INTO account(email, Password, idRole, flag ) VALUES (?,?,'guest',true)`,
     [email, hashedPassword, idRole, flag],
     (err, result, fields) => {
       if (err) {
@@ -37,9 +37,13 @@ exports.login = asyncMiddleware(async (req, res, next) => {
       if (err) {
         console.log(err);
       }
-      //     console.log("result.email", result[0].email);
+      // console.log("result.email", result[0].email);
+      // console.log("result.email", result[0].Password);
+      // console.log("result.email", result.length);
+
       if (result.length > 0) {
-        const checkPass = await bcrypt.compare(Password, result[0].Password);
+        const checkPass = bcrypt.compare(Password, result[0].Password);
+        console.log("checkPass,", checkPass);
         if (checkPass) {
           const token = jwt.sign(
             {
