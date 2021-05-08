@@ -17,7 +17,7 @@ exports.register = asyncMiddleware(async (req, res, next) => {
     return next(new ErrorResponse(400, "Valid Email"));
   }
   mysql.query(
-    `INSERT INTO account(email, Password, idRole, flag ) VALUES (?,?,'guest',true)`,
+    `INSERT INTO account(email, Password, idRole, flag ) VALUES (?,?,'owner',true)`,
     [email, hashedPassword, idRole, flag],
     (err, result, fields) => {
       if (err) {
@@ -40,10 +40,9 @@ exports.login = asyncMiddleware(async (req, res, next) => {
       // console.log("result.email", result[0].email);
       // console.log("result.email", result[0].Password);
       // console.log("result.email", result.length);
-
       if (result.length > 0) {
         const checkPass = bcrypt.compare(Password, result[0].Password);
-        console.log("checkPass,", checkPass);
+        // console.log("checkPass,", checkPass);
         if (checkPass) {
           const token = jwt.sign(
             {
@@ -54,8 +53,10 @@ exports.login = asyncMiddleware(async (req, res, next) => {
             },
             process.env.JWT_KEY //secret key
           );
-          console.log(token);
-          return res.status(200).json(new SuccessResponse(200, token));
+          const role = result[0].idRole;
+          return res
+            .status(200)
+            .json(new SuccessResponse(200, { token, idRole: role }));
         } else {
           return next(new ErrorResponse(404, "Email is not found"));
         }

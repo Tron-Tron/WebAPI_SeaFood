@@ -3,13 +3,13 @@ const ErrorResponse = require("../model/ErrorResponse");
 const SuccessResponse = require("../model/SuccessResponse");
 const mysql = require("../sql/mysql");
 exports.createNewCategory = asyncMiddleware(async (req, res, next) => {
-  const { CategoryName } = req.body;
+  const { CategoryName, parent_id } = req.body;
   if (CategoryName === "") {
     return next(new ErrorResponse(400, "CategoryName is empty"));
   }
   mysql.query(
-    `INSERT INTO category(CategoryName) VALUES (?)`,
-    [CategoryName],
+    `INSERT INTO category(CategoryName) VALUES (?,?)`,
+    [CategoryName, parent_id],
     (err, result, fields) => {
       if (err) {
         return next(new ErrorResponse(500, err.sqlMessage));

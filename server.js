@@ -8,8 +8,10 @@ const category = require("./route/api/category");
 const product = require("./route/api/product");
 const detailOrders = require("./route/api/detailOrders");
 const customer = require("./route/api/customer");
-
+const notifi = require("./route/api/notifi");
 const orders = require("./route/api/orders");
+const staffs = require("./route/api/staff");
+
 const PORT = 5000;
 const { errorMiddleware } = require("./middleware/errorMiddleware");
 const cors = require("cors");
@@ -28,6 +30,8 @@ app.use("/api/v1/product", product);
 app.use("/api/v1/order", orders);
 app.use("/api/v1/detailorder", detailOrders);
 app.use("/api/v1/customer", customer);
+app.use("/api/v1/notifi", notifi);
+app.use("/api/v1/staff", staffs);
 
 app.get("/test", baseAuth);
 //viet duoi route

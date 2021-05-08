@@ -69,7 +69,7 @@ exports.deleteProductById = asyncMiddleware(async (req, res, next) => {
     return next(new ErrorResponse(400, "idProduct is empty"));
   }
   mysql.query(
-    `DELETE FROM products WHERE id= ?`,
+    `UPDATE products SET flag = 0 WHERE id = ?`,
     [id],
     (err, result, fields) => {
       if (err) {
